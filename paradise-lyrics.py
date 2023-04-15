@@ -182,20 +182,19 @@ if args.version:
     displayCredits()
 
 if args.syntax:
-    #print(f'Syntax is on {args.syntax}')
+    #print(f'Syntax value: {args.syntax}')
     lyricsSyntax = args.syntax
 
 if args.track:
-    #print(f'Track is on {args.track}')
+    #print(f'Track value: {args.track}')
     trackIdSpotify = args.track
 else:
     print('Track id value must be informed')
+    
     exit(2)
 
 ##############################
 # Calling the functions
 ##############################
 
-#trackIdSpotify = sys.argv[1]
-#lyricsSyntax = sys.argv[2]
 main(trackIdSpotify, lyricsSyntax)
