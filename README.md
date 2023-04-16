@@ -42,10 +42,10 @@ Get synchronized lyrics `.lrc` file content from command line interface (CLI).
 
 ```bash
 # Installing with cURL
-curl -L https://raw.githubusercontent.com/henrikbeck95/paradise-lyrics/development/paradise-lyrics.py -o ~/.local/bin/paradise-lyrics
+curl -L https://raw.githubusercontent.com/henrikbeck95/paradise-lyrics/main/paradise-lyrics.py -o ~/.local/bin/paradise-lyrics
 
 # OR installing with wGET
-wget https://raw.githubusercontent.com/henrikbeck95/paradise-lyrics/development/paradise-lyrics.py -O ~/.local/bin/paradise-lyrics
+wget https://raw.githubusercontent.com/henrikbeck95/paradise-lyrics/main/paradise-lyrics.py -O ~/.local/bin/paradise-lyrics
 
 # Give executable permission
 chmod +x ~/.local/bin/paradise-lyrics
