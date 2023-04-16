@@ -5,10 +5,35 @@
 import json
 import requests
 
-def dataGenerateLyricsStatic(dataJsonResponse, lyricsSyntax):
-    print('There is only static lyrics available.\nWe are working to implementing this function soon!')
+def dataLyricsBuild(trackIdSpotify, lyricsSyntax):
+    urlSpotify = urlGenerateBaseSpotify(trackIdSpotify)
+    #print("Requesting the " + urlSpotify + " url...")
 
-def dataGenerateLyricsSynchronized(dataJsonResponse, lyricsSyntax):
+    dataJsonResponse = internetRequestMethodGetFormatJson(urlSpotify)
+    dataJsonStatusError = dataJsonResponse['error']
+    #print(dataJsonResponse)
+
+    if dataJsonStatusError == False:
+        return dataLyricsGenerateMain(dataJsonResponse, lyricsSyntax)
+    else:
+        return 'Could not be found lyrics for this track!'
+        #exit(3)
+
+def dataLyricsGenerateMain(dataJsonResponse, lyricsSyntax):
+    dataJsonStatusTypeSynchronized = dataJsonResponse['syncType']
+
+    if dataJsonStatusTypeSynchronized == "LINE_SYNCED":
+        infoPrintHeader()
+        infoPrintFormatSyntax(lyricsSyntax)
+
+        return dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax)
+    else:
+        return dataLyricsGenerateStatic(dataJsonResponse, lyricsSyntax)
+
+def dataLyricsGenerateStatic(dataJsonResponse, lyricsSyntax):
+    return 'There is only static lyrics available.\nWe are working to implementing this function soon!'
+
+def dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax):
     #print('Synchronized lyrics are available \o/')
     #print(dataJsonResponse['lines'])
     #print(dataJsonResponse['lines'][2])

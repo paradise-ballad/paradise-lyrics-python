@@ -11,34 +11,9 @@ import importlib
 paradiseLibrary = importlib.import_module("paradise-library")
 
 def main(trackIdSpotify, lyricsSyntax):
-    urlSpotify = paradiseLibrary.urlGenerateBaseSpotify(trackIdSpotify)
-    #print("Requesting the " + urlSpotify + " url...")
-
-    dataJsonResponse = paradiseLibrary.internetRequestMethodGetFormatJson(urlSpotify)
-    dataJsonStatusError = dataJsonResponse['error']
-    #print(dataJsonResponse)
-
-    if dataJsonStatusError == False:
-        dataJsonStatusTypeSynchronized = dataJsonResponse['syncType']
-
-        if dataJsonStatusTypeSynchronized == "LINE_SYNCED":
-            paradiseLibrary.infoPrintHeader()
-            paradiseLibrary.infoPrintFormatSyntax(lyricsSyntax)
-            
-            lyrics = paradiseLibrary.dataGenerateLyricsSynchronized(dataJsonResponse, lyricsSyntax)
-
-            print(lyrics)
-
-            exit(0)
-            
-        else:
-            paradiseLibrary.dataGenerateLyricsStatic(dataJsonResponse, lyricsSyntax)
-
-            exit(0)
-
-    else:
-        print('Could not be found lyrics for this track!')
-        exit(3)
+    lyricsContent = paradiseLibrary.dataLyricsBuild(trackIdSpotify, lyricsSyntax)
+    
+    print(lyricsContent)
 
 ##############################
 # Arguments treatment
