@@ -77,16 +77,14 @@ def dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax):
             lyricsSyntaxPrefix = f'[{formatSyntaxLyricsAsMinutesSeconds(timeMilliseconds)}]'
         else:
             pass
-
         
-        # Remove empty content from the last line
+        # Do not append the content if latest line is empty
         if words[i] == '' and i == len(words) - 1:
             pass
         else:
             resultLineCurrent = f'{lyricsSyntaxPrefix}{words[i]}'
 
             resultContent.append(f'{resultLineCurrent}')
-
 
     return resultContent
 

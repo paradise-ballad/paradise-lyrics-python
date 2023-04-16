@@ -17,7 +17,7 @@
 # Declaring the variables
 ##############################
 
-PATH_OUTPUT_DIRECTORY="./dist"
+PATH_OUTPUT_DIRECTORY="./examples"
 #TRACK_ID="0nLiqZ6A27jJri2VCalIUz" # Invalid
 TRACK_ID="0nLiqZ6A27jJri2VCalIUs" # Valid
 TRACK_NAME="nothing_else_matters"
@@ -51,6 +51,9 @@ lyrics_download() {
 
     display_message "warning" "Generating the '$PATH_OUTPUT_FILE' file..."
 
+	# Wait 3 seconds for avoiding saturating the API
+	sleep 3
+
     ./paradise-lyrics.py --track "$TRACK" --syntax "$SYNTAX" > "$PATH_OUTPUT_FILE" && \
     	display_message "success" "Download successed :)" || \
 	display_message "fail" "Something wrong happened :("
@@ -63,7 +66,7 @@ lyrics_download() {
 mkdir -p "$PATH_OUTPUT_DIRECTORY"/
 
 lyrics_download "$TRACK_ID" "" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_raw.${EXTENSION}"
-lyrics_download "$TRACK_ID" "hh:mm:ss:ms" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_hh_mm_ss_ms.${EXTENSION}"
-lyrics_download "$TRACK_ID" "hh:mm:ss" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_hh_mm_ss.${EXTENSION}"
-lyrics_download "$TRACK_ID" "mm:ss:ms" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_mm_ss_ms.${EXTENSION}"
-lyrics_download "$TRACK_ID" "mm:ss" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_mm_ss.${EXTENSION}"
+lyrics_download "$TRACK_ID" "hh:mm:ss:ms" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_hhmmssms.${EXTENSION}"
+lyrics_download "$TRACK_ID" "hh:mm:ss" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_hhmmss.${EXTENSION}"
+lyrics_download "$TRACK_ID" "mm:ss:ms" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_mmssms.${EXTENSION}"
+lyrics_download "$TRACK_ID" "mm:ss" "${PATH_OUTPUT_DIRECTORY}/${TRACK_NAME}_mmss.${EXTENSION}"

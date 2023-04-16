@@ -21,6 +21,7 @@ def main(trackIdSpotify, lyricsSyntax):
     lyricsContent += paradiseLibrary.infoPrintFormatSyntax(lyricsSyntax)
     lyricsContent += '\n'
 
+    # Implement the lyrics
     lyricsContent += paradiseLibrary.dataLyricsBuild(trackIdSpotify, lyricsSyntax, urlSpotify)
     
     print(lyricsContent)
@@ -42,6 +43,7 @@ trackIdSpotify = ""
 
 if args.version:
     paradiseLibrary.infoPrintCredits()
+    
     exit(0)
 
 if args.syntax:
@@ -53,6 +55,7 @@ if args.track:
     trackIdSpotify = args.track
 else:
     print('Track id value must be informed')
+
     exit(1)
 
 ##############################
