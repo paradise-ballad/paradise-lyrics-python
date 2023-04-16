@@ -2,7 +2,57 @@
 # vi: set ft=python :
 # vi: set ts=4 :
 
+import json
 import requests
+
+def dataGenerateLyricsStatic(dataJsonResponse, lyricsSyntax):
+    print('There is only static lyrics available.\nWe are working to implementing this function soon!')
+
+def dataGenerateLyricsSynchronized(dataJsonResponse, lyricsSyntax):
+    #print('Synchronized lyrics are available \o/')
+    #print(dataJsonResponse['lines'])
+    #print(dataJsonResponse['lines'][2])
+    #print(dataJsonResponse['lines'][2]['startTimeMs'])
+
+    # Initialize the variables
+    lyricsSyntaxPrefix = ''
+    resultContent = ''
+    resultLineCurrent = ''
+
+    # Initialize the array variables
+    startTimeMs = []
+    words = []
+    #syllables = []
+    endTimeMs = []
+
+    # Store the lines contents into an array
+    for i in dataJsonResponse['lines']:
+        startTimeMs.append(i['startTimeMs'])
+        words.append(i['words'])
+        #syllables.append(i['syllables'])
+        endTimeMs.append(i['endTimeMs'])
+
+    # Generate the lyrics content
+    for i in range(len(words)):
+        timeMilliseconds = int(primitiveConvertStringToNumber(startTimeMs[i]))
+
+        if lyricsSyntax == 'hh:mm:ss:ms':
+            lyricsSyntaxPrefix = f'[{formatSyntaxLyricsAsHoursMinutesSecondsMilliseconds(timeMilliseconds)}]'
+        elif lyricsSyntax == 'hh:mm:ss':
+            lyricsSyntaxPrefix = f'[{formatSyntaxLyricsAsHoursMinutesSeconds(timeMilliseconds)}]'
+        elif lyricsSyntax == 'mm:ss:ms':
+            lyricsSyntaxPrefix = f'[{formatSyntaxLyricsAsMinutesSecondsMilliseconds(timeMilliseconds)}]'
+        elif lyricsSyntax == 'mm:ss':
+            lyricsSyntaxPrefix = f'[{formatSyntaxLyricsAsMinutesSeconds(timeMilliseconds)}]'
+        else:
+            lyricsSyntaxPrefix = ''
+
+        resultLineCurrent = f'{lyricsSyntaxPrefix}{words[i]}'
+
+        #print(resultLineCurrent)
+        resultContent += (f'{resultLineCurrent}\n')
+    
+    return resultContent
 
 def formatSyntaxLyricsAsHoursMinutesSecondsMilliseconds(durationMilliseconds):
     timeMilliseconds = timeConvertFromMillisecondsToMilliseconds(durationMilliseconds)

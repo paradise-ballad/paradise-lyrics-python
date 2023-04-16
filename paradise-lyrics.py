@@ -10,12 +10,6 @@ import importlib
 
 paradiseLibrary = importlib.import_module("paradise-library")
 
-##############################
-# Utilities
-##############################
-
-# TODO
-# - [ ] Refactor this function by splitting it into smaller components
 def main(trackIdSpotify, lyricsSyntax):
     urlSpotify = paradiseLibrary.urlGenerateBaseSpotify(trackIdSpotify)
     #print("Requesting the " + urlSpotify + " url...")
@@ -28,46 +22,18 @@ def main(trackIdSpotify, lyricsSyntax):
         dataJsonStatusTypeSynchronized = dataJsonResponse['syncType']
 
         if dataJsonStatusTypeSynchronized == "LINE_SYNCED":
-            #print('Synchronized lyrics are available \o/')
-            #print(dataJsonResponse['lines'])
-            #print(dataJsonResponse['lines'][2])
-            #print(dataJsonResponse['lines'][2]['startTimeMs'])
-
-            # Initialize the array variables
-            startTimeMs = []
-            words = []
-            #syllables = []
-            endTimeMs = []
-
-            # Store the lines contents into an array
-            for i in dataJsonResponse['lines']:
-                startTimeMs.append(i['startTimeMs'])
-                words.append(i['words'])
-                #syllables.append(i['syllables'])
-                endTimeMs.append(i['endTimeMs'])
-
             paradiseLibrary.infoPrintHeader()
             paradiseLibrary.infoPrintFormatSyntax(lyricsSyntax)
+            
+            lyrics = paradiseLibrary.dataGenerateLyricsSynchronized(dataJsonResponse, lyricsSyntax)
 
-            # Generate the lyrics content
-            for i in range(len(words)):
-                lyricsSyntaxPrefix = ''
-                timeMilliseconds = int(paradiseLibrary.primitiveConvertStringToNumber(startTimeMs[i]))
+            print(lyrics)
 
-                if lyricsSyntax == 'hh:mm:ss:ms':
-                    lyricsSyntaxPrefix = f'[{paradiseLibrary.formatSyntaxLyricsAsHoursMinutesSecondsMilliseconds(timeMilliseconds)}]'
-                elif lyricsSyntax == 'hh:mm:ss':
-                    lyricsSyntaxPrefix = f'[{paradiseLibrary.formatSyntaxLyricsAsHoursMinutesSeconds(timeMilliseconds)}]'
-                elif lyricsSyntax == 'mm:ss:ms':
-                    lyricsSyntaxPrefix = f'[{paradiseLibrary.formatSyntaxLyricsAsMinutesSecondsMilliseconds(timeMilliseconds)}]'
-                elif lyricsSyntax == 'mm:ss':
-                    lyricsSyntaxPrefix = f'[{paradiseLibrary.formatSyntaxLyricsAsMinutesSeconds(timeMilliseconds)}]'
-                else:
-                    lyricsSyntaxPrefix = ''
-
-                print(f'{lyricsSyntaxPrefix}{words[i]}')
+            exit(0)
+            
         else:
-            print('Only static lyrics are available')
+            paradiseLibrary.dataGenerateLyricsStatic(dataJsonResponse, lyricsSyntax)
+
             exit(0)
 
     else:
