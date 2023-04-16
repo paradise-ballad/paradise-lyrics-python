@@ -4,14 +4,24 @@
 # vi: set ft=python :
 # vi: set ts=4 :
 
-import json
+#import json
 import argparse
 import importlib
 
 paradiseLibrary = importlib.import_module("paradise-library")
 
 def main(trackIdSpotify, lyricsSyntax):
-    lyricsContent = paradiseLibrary.dataLyricsBuild(trackIdSpotify, lyricsSyntax)
+    urlSpotify = paradiseLibrary.urlGenerateBaseSpotify(trackIdSpotify)
+    #print("Requesting the " + urlSpotify + " url...")
+
+    # Implement header info
+    lyricsContent = ''
+    lyricsContent += paradiseLibrary.infoPrintHeader()
+    lyricsContent += '\n'
+    lyricsContent += paradiseLibrary.infoPrintFormatSyntax(lyricsSyntax)
+    lyricsContent += '\n'
+
+    lyricsContent += paradiseLibrary.dataLyricsBuild(trackIdSpotify, lyricsSyntax, urlSpotify)
     
     print(lyricsContent)
 

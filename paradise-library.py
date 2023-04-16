@@ -5,16 +5,23 @@
 import json
 import requests
 
-def dataLyricsBuild(trackIdSpotify, lyricsSyntax):
-    urlSpotify = urlGenerateBaseSpotify(trackIdSpotify)
-    #print("Requesting the " + urlSpotify + " url...")
-
+def dataLyricsBuild(trackIdSpotify, lyricsSyntax, urlSpotify):
     dataJsonResponse = internetRequestMethodGetFormatJson(urlSpotify)
     dataJsonStatusError = dataJsonResponse['error']
     #print(dataJsonResponse)
 
     if dataJsonStatusError == False:
-        return dataLyricsGenerateMain(dataJsonResponse, lyricsSyntax)
+        result = ''
+        lyricsArray = dataLyricsGenerateMain(dataJsonResponse, lyricsSyntax)
+
+        # Build all the lyrics content inside a single variable
+        for i in range(len(lyricsArray)):
+            result += lyricsArray[i]
+
+            if i < len(lyricsArray) - 1:
+                result += '\n'
+
+        return result
     else:
         return 'Could not be found lyrics for this track!'
         #exit(3)
@@ -23,9 +30,6 @@ def dataLyricsGenerateMain(dataJsonResponse, lyricsSyntax):
     dataJsonStatusTypeSynchronized = dataJsonResponse['syncType']
 
     if dataJsonStatusTypeSynchronized == "LINE_SYNCED":
-        infoPrintHeader()
-        infoPrintFormatSyntax(lyricsSyntax)
-
         return dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax)
     else:
         return dataLyricsGenerateStatic(dataJsonResponse, lyricsSyntax)
@@ -41,7 +45,7 @@ def dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax):
 
     # Initialize the variables
     lyricsSyntaxPrefix = ''
-    resultContent = ''
+    resultContent = []
     resultLineCurrent = ''
 
     # Initialize the array variables
@@ -59,6 +63,8 @@ def dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax):
 
     # Generate the lyrics content
     for i in range(len(words)):
+        #print(i, words[i])
+
         timeMilliseconds = int(primitiveConvertStringToNumber(startTimeMs[i]))
 
         if lyricsSyntax == 'hh:mm:ss:ms':
@@ -70,17 +76,22 @@ def dataLyricsGenerateSynchronized(dataJsonResponse, lyricsSyntax):
         elif lyricsSyntax == 'mm:ss':
             lyricsSyntaxPrefix = f'[{formatSyntaxLyricsAsMinutesSeconds(timeMilliseconds)}]'
         else:
-            lyricsSyntaxPrefix = ''
+            pass
 
-        resultLineCurrent = f'{lyricsSyntaxPrefix}{words[i]}'
+        
+        # Remove empty content from the last line
+        if words[i] == '' and i == len(words) - 1:
+            pass
+        else:
+            resultLineCurrent = f'{lyricsSyntaxPrefix}{words[i]}'
 
-        #print(resultLineCurrent)
-        resultContent += (f'{resultLineCurrent}\n')
-    
+            resultContent.append(f'{resultLineCurrent}')
+
+
     return resultContent
 
 def formatSyntaxLyricsAsHoursMinutesSecondsMilliseconds(durationMilliseconds):
-    timeMilliseconds = timeConvertFromMillisecondsToMilliseconds(durationMilliseconds)
+    timeMilliseconds = timeConvertFromMillisecondsToHundredth(durationMilliseconds)
     timeSeconds = timeConvertFromMillisecondsToSeconds(durationMilliseconds)
     timeMinutes = timeConvertFromMillisecondsToMinutes(durationMilliseconds)
     timeHours = timeConvertFromMillisecondsToHours(durationMilliseconds)
@@ -93,7 +104,7 @@ def formatSyntaxLyricsAsHoursMinutesSecondsMilliseconds(durationMilliseconds):
     return f'{timeHours}:{timeMinutes}:{timeSeconds}:{timeMilliseconds}'
 
 def formatSyntaxLyricsAsHoursMinutesSeconds(durationMilliseconds):
-    timeMilliseconds = timeConvertFromMillisecondsToMilliseconds(durationMilliseconds)
+    timeMilliseconds = timeConvertFromMillisecondsToHundredth(durationMilliseconds)
     timeSeconds = timeConvertFromMillisecondsToSeconds(durationMilliseconds)
     timeMinutes = timeConvertFromMillisecondsToMinutes(durationMilliseconds)
     timeHours = timeConvertFromMillisecondsToHours(durationMilliseconds)
@@ -105,7 +116,7 @@ def formatSyntaxLyricsAsHoursMinutesSeconds(durationMilliseconds):
     return f'{timeHours}:{timeMinutes}:{timeSeconds}'
 
 def formatSyntaxLyricsAsMinutesSecondsMilliseconds(durationMilliseconds):
-    timeMilliseconds = timeConvertFromMillisecondsToMilliseconds(durationMilliseconds)
+    timeMilliseconds = timeConvertFromMillisecondsToHundredth(durationMilliseconds)
     timeSeconds = timeConvertFromMillisecondsToSeconds(durationMilliseconds)
     timeMinutes = timeConvertFromMillisecondsToMinutes(durationMilliseconds)
     timeHours = timeConvertFromMillisecondsToHours(durationMilliseconds)
@@ -116,7 +127,7 @@ def formatSyntaxLyricsAsMinutesSecondsMilliseconds(durationMilliseconds):
     return f'{timeMinutes}:{timeSeconds}:{timeMilliseconds}'
 
 def formatSyntaxLyricsAsMinutesSeconds(durationMilliseconds):
-    timeMilliseconds = timeConvertFromMillisecondsToMilliseconds(durationMilliseconds)
+    timeMilliseconds = timeConvertFromMillisecondsToHundredth(durationMilliseconds)
     timeSeconds = timeConvertFromMillisecondsToSeconds(durationMilliseconds)
     timeMinutes = timeConvertFromMillisecondsToMinutes(durationMilliseconds)
     timeHours = timeConvertFromMillisecondsToHours(durationMilliseconds)
@@ -136,18 +147,23 @@ def infoPrintCredits():
     print('Lyrics source: https://spotify-lyric-api.herokuapp.com')
 
 def infoPrintFormatSyntax(lyricsSyntax):
+    result = ''
+
     if lyricsSyntax == 'hh:mm:ss:ms' \
         or lyricsSyntax == 'hh:mm:ss' \
         or lyricsSyntax == 'mm:ss:ms' \
         or lyricsSyntax == 'mm:ss':
-        print(f'[{lyricsSyntax}]')
+        result = f'\n[{lyricsSyntax}]'
+
+    return result
 
 def infoPrintHeader():
-    print('[Credit:Generated by Lyrics Paradise]')
-    print('[Source:https://github.com/henrikbeck95/paradise-lyrics]')
-    print('[ApiUrl:https://spotify-lyric-api.herokuapp.com/]')
-    #print('[length:mm:ss.mmm]')
-    print('')
+    result = '[Credit:Generated by Lyrics Paradise]'
+    result += '\n[Source:https://github.com/henrikbeck95/paradise-lyrics]'
+    result += '\n[ApiUrl:https://spotify-lyric-api.herokuapp.com/]'
+    #result += '\n[length:mm:ss.mmm]'
+
+    return result
 
 def internetRequestMethodGetFormatJson(url):
     headers = {'Accept': 'application/json'}
@@ -155,11 +171,11 @@ def internetRequestMethodGetFormatJson(url):
 
     return r.json()
 
-def primitiveConvertStringToNumber(number):
-    if isinstance(number, str):
-        number = float(number)
-    
-    return number
+def primitiveConvertStringToNumber(numberString):
+    if isinstance(numberString, str):
+        numberString = float(numberString)
+
+    return numberString
 
 def timeClockDigitsInsertIfNeeds(digits):
     if digits < 10:
@@ -170,7 +186,7 @@ def timeClockDigitsInsertIfNeeds(digits):
 def timeConvertFromMillisecondsToHours(milliseconds):
     return int((milliseconds / (1000 * 60 * 60)) % 24)
 
-def timeConvertFromMillisecondsToMilliseconds(milliseconds):
+def timeConvertFromMillisecondsToHundredth(milliseconds):
     return int((milliseconds % 1000) / 10)
 
 def timeConvertFromMillisecondsToMinutes(milliseconds):
